@@ -7,6 +7,7 @@ readme = "README.md"
 packages = [
     { include = "galscal" },
     { include = "scsample" },
+    { include = "illustris_python", from = "illustris_python" },
 ]
 
 [tool.poetry.dependencies]
@@ -16,8 +17,8 @@ scipy = "^1.15.2"
 astropy = "^7.0.1"
 matplotlib = "^3.10.0"
 h5py = "^3.13.0"
-illustris-python = {git = "https://github.com/illustristng/illustris_python"}
 tqdm = "^4.67.1"
+six = "^1.17.0"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"

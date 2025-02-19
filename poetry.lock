@@ -458,26 +458,6 @@ files = [
 numpy = ">=1.19.3"
 
 [[package]]
-name = "illustris_python"
-version = "1.0.0"
-description = ""
-optional = false
-python-versions = "*"
-files = []
-develop = false
-
-[package.dependencies]
-h5py = "*"
-numpy = "*"
-six = "*"
-
-[package.source]
-type = "git"
-url = "https://github.com/illustristng/illustris_python"
-reference = "HEAD"
-resolved_reference = "b7bc432e994ce057f30ee135ca9d43654d60f14d"
-
-[[package]]
 name = "ipykernel"
 version = "6.29.5"
 description = "IPython Kernel for Jupyter"
@@ -1544,4 +1524,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "f9758c2a55fa27160648c8ac5bcc1a7ba45a217d35888c6d7fc835003774b61a"
+content-hash = "90396921d63a5614d7599d29e16b394a925311a86f792549c92693fda8dfd072"
