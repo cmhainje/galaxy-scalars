@@ -4,10 +4,19 @@ version = "0.1.0"
 description = ""
 authors = ["Connor Hainje <cmhainje@gmail.com>"]
 readme = "README.md"
+packages = [
+    { include = "galscal" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.12"
 
+[virtualenvs]
+in-project = true
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
 
 [build-system]
 requires = ["poetry-core"]
