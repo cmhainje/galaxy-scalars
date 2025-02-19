@@ -475,7 +475,7 @@ six = "*"
 type = "git"
 url = "https://github.com/cmhainje/illustris_python"
 reference = "HEAD"
-resolved_reference = "063a76dc948f8606c69b01dd528906d7187ba11e"
+resolved_reference = "dd808a57d3c26348c7da837562f677e603b556b8"
 
 [[package]]
 name = "ipykernel"
@@ -1544,4 +1544,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "3a4b3654a9825c6a1775c3f796143c10720f4e62c57cac669b4cc1d7d1ce5af9"
+content-hash = "cc9b27e3f3a65c7925e3c31311bff71e418ebeb6d322bc3140de21ec84d7ed33"

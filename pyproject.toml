@@ -17,7 +17,6 @@ astropy = "^7.0.1"
 matplotlib = "^3.10.0"
 h5py = "^3.13.0"
 tqdm = "^4.67.1"
-six = "^1.17.0"
 illustris-python = {git = "https://github.com/cmhainje/illustris_python"}
 
 [tool.poetry.group.dev.dependencies]

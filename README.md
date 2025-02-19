@@ -22,6 +22,6 @@ cd galaxy-scalars
 poetry install
 ```
 
-`--recurse-submodules` is necessary to properly download and install the dependencies [illustris_python](https://github.com/illustristng/illustris_python) and [scsample](https://github.com/aust427/scsample) (formerly known as illustris_sam)
+`--recurse-submodules` is necessary to properly download and install the dependency [scsample](https://github.com/aust427/scsample) (formerly known as illustris_sam)
 
 these steps require that you have Poetry installed
