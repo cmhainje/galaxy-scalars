@@ -1,6 +1,3 @@
 [submodule "scsample"]
 	path = scsample
 	url = https://github.com/aust427/scsample.git
-[submodule "illustris_python"]
-	path = illustris_python
-	url = https://github.com/illustristng/illustris_python.git
