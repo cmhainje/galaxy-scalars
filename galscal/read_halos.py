@@ -252,7 +252,7 @@ class SimulationReader:
         self.ipart_star = il.snapshot.partTypeNum("stars")  # 4
 
     # TODO: clean up
-    def match_twins(self):
+    def match_twins(self, subhalo_matching_file=None):
         # Load twin-matching file
         fn_match_dark_to_full = f"../data/subhalo_matching_dicts/subhalo_dark_to_full_dict_{self.sim_name}.npy"
         fn_match_full_to_dark = f"../data/subhalo_matching_dicts/subhalo_full_to_dark_dict_{self.sim_name}.npy"
@@ -266,10 +266,9 @@ class SimulationReader:
                 fn_match_full_to_dark, allow_pickle=True
             ).item()
         else:
-            with h5py.File(
-                f"{self.tng_path_hydro}/postprocessing/subhalo_matching_to_dark.hdf5",
-                "r",
-            ) as f:
+            if subhalo_matching_file is None:
+                subhalo_matching_file = f"{self.tng_path_hydro}/postprocessing/subhalo_matching_to_dark.hdf5"
+            with h5py.File(subhalo_matching_file, "r") as f:
                 # Note: there are two different matching algorithms: 'SubhaloIndexDark_LHaloTree' &
                 # 'SubhaloIndexDark_SubLink'. choosing first for now
                 subhalo_full_to_dark_inds = f[f"Snapshot_{self.snap_num}"][
