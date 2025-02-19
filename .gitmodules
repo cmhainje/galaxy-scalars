@@ -1,0 +1,3 @@
+[submodule "scsample"]
+	path = scsample
+	url = https://github.com/aust427/scsample.git
