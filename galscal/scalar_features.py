@@ -105,7 +105,7 @@ class ScalarFeaturizer:
                     )  # returns in ascending order
                     for i_e, value in enumerate(eigenvalues):
                         eig_num = 3 - i_e  # this makes lambda_1 = max, lambda_3 = min
-                        operations = [f"\lambda_{eig_num}"]
+                        operations = [f"\\lambda_{eig_num}"]
                         scalar_features_single.append(
                             ScalarFeature(
                                 value,
@@ -164,6 +164,11 @@ class ScalarFeaturizer:
                                 ), msg
                             value = np.einsum("jk,jk", g1.value, g2.value)
                             operations = ["jk", "jk"]
+                        else:
+                            raise RuntimeError("`operations` unspecified")
+
+                    else:
+                        raise RuntimeError("`operations` unspecified")
 
                     # Get scalar feature properties and add to list
                     # only add to list if we assigned it a value, aka it matched one of the criteria above
@@ -203,8 +208,8 @@ class ScalarFeaturizer:
                     scalar_features.append(
                         ScalarFeature(
                             value,
-                            geo_key,
-                            geo_name,
+                            geo_keys,
+                            geo_names,
                             m_order,
                             x_order,
                             v_order,
@@ -247,6 +252,7 @@ class ScalarFeaturizer:
 
     def compute_MXV_from_features(self):
         # to see what n's we have, get a set of them for just one halo (should all be same)
+        raise NotImplementedError("don't know what rebin_geometric_features is")
         ns_all = list(set([g.n for g in self.geo_feature_arr[0]]))
         geo_feature_arr_onebin = utils.rebin_geometric_features(
             self.geo_feature_arr, [ns_all]
@@ -383,7 +389,7 @@ def scalar_name(scalar_feature, mode="readable"):
         elif "lambda" in scalar_feature.operations[i]:
             name_parts.append(f"{scalar_feature.operations[i]}\\left({g_name}\\right)")
 
-    name = " \, ".join(name_parts)
+    name = " \\, ".join(name_parts)
     return name
 
 
@@ -394,10 +400,10 @@ def scalar_table_to_objects(tab_scalars, tab_scalar_info):
 
     scalar_feature_arr = []
     # i indexes halo
-    for i in range(len(tab_geos)):
+    for i in range(len(tab_scalars)):
         scalar_features_halo = []
         # j indexes scalar feature
-        for j in range(len(tab_geo_info)):
+        for j in range(len(tab_scalar_info)):
             scalar_key = tab_scalar_info["scalar_key"][j]
             geo_keys = tab_scalar_info["geo_keys"][j]
             geo_keys = geo_keys[geo_keys != ""]
@@ -429,15 +435,13 @@ def scalar_objects_to_table(scalar_feature_arr, idxs_halos_dark):
     # these are the columns; number N_geos
     scalar_keys = [scalar_name(s, mode="multipole") for s in scalar_feature_arr[0]]
     # vals is a 2nd array of (N_halos, N_geos)
-    scalar_vals = np.array(
-        [[s.value for s in scalars] for scalars in scalar_feature_arr]
-    )
+    scalar_vals = [[s.value for s in scalars] for scalars in scalar_feature_arr]
 
     tab_scalars = Table()
     tab_scalars["idx_halo_dark"] = np.array(idxs_halos_dark)
 
-    for j in range(scalar_vals.shape[1]):
-        tab_scalars[scalar_keys[j]] = np.stack(scalar_vals[:, j])
+    for j in range(len(scalar_vals[0])):
+        tab_scalars[scalar_keys[j]] = np.stack([s[j] for s in scalar_vals])
 
     print(tab_scalars.columns)
 
