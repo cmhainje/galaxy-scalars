@@ -207,12 +207,12 @@ def vector_outer_product(v1, v2):
 def geo_name(geometric_feature, mode="readable"):
     assert mode in ["readable", "multipole"], "Name mode not recognized!"
 
-    n_str = str(geometric_feature.n)
+    name = str(geometric_feature.n)
     if geometric_feature.n > 9:
-        n_str = f"({geometric_feature.n})"
+        name = f"({geometric_feature.n})"
     if mode == "multipole":
         # double curly braces escape f-string formatting, make single brace
-        name = f"g_{{{geometric_feature.x_order}{geometric_feature.v_order}{n_str}}}"
+        name = f"g_{{{geometric_feature.x_order}{geometric_feature.v_order}{name}}}"
         if not geometric_feature.hermitian:
             name += "_A"
         # i dont know how this none string thing happened,
@@ -236,14 +236,14 @@ def geo_name(geometric_feature, mode="readable"):
         # so hardcoded; careful here if change!
         if geometric_feature.modification == "symmetrized":
             # name = f'\\frac{{1}}{{2}} (C^{{xv}}_{n_str} + C^{{vx}}_{n_str})'
-            name = "C^{{xv},S}_" + n_str
+            name = "C^{{xv},S}_" + name
         elif geometric_feature.modification == "antisymmetrized":
             # name = f'\\frac{{1}}{{2}} (C^{{xv}}_{n_str} - C^{{vx}}_{n_str})'
-            name = "C^{{xv},A}_" + n_str
+            name = "C^{{xv},A}_" + name
         else:
             name = (
                 geo_name_dict[(geometric_feature.x_order, geometric_feature.v_order)]
-                + f"_{n_str}"
+                + f"_{name}"
             )
     return name
 
@@ -413,13 +413,13 @@ def geo_objects_to_table(geo_feature_arr, idxs_halos_dark):
     # these are the columns; number N_geos
     geo_keys = [geo_name(g, mode="multipole") for g in geo_feature_arr[0]]
     # vals is a 2nd array of (N_halos, N_geos)
-    geo_vals = np.array([[g.value for g in geos] for geos in geo_feature_arr])
+    geo_vals = [[g.value for g in geos] for geos in geo_feature_arr]
 
     tab_geos = Table()
     tab_geos["idx_halo_dark"] = np.array(idxs_halos_dark)
 
-    for j in range(geo_vals.shape[1]):
-        tab_geos[geo_keys[j]] = np.stack(geo_vals[:, j])
+    for j in range(len(geo_vals[0])):
+        tab_geos[geo_keys[j]] = np.stack([g[j] for g in geo_vals])
 
     return tab_geos
 
