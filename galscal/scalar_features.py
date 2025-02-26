@@ -142,6 +142,7 @@ class ScalarFeaturizer:
                 for j_geo_term in range(i_geo_term, N_geo):
                     g2 = geometric_features[j_geo_term]
                     value = None
+                    operations = [""]
 
                     x_order = g1.x_order + g2.x_order
                     v_order = g1.v_order + g2.v_order
@@ -164,11 +165,6 @@ class ScalarFeaturizer:
                                 ), msg
                             value = np.einsum("jk,jk", g1.value, g2.value)
                             operations = ["jk", "jk"]
-                        else:
-                            raise RuntimeError("`operations` unspecified")
-
-                    else:
-                        raise RuntimeError("`operations` unspecified")
 
                     # Get scalar feature properties and add to list
                     # only add to list if we assigned it a value, aka it matched one of the criteria above
@@ -196,8 +192,8 @@ class ScalarFeaturizer:
                     s2 = scalar_features_single[j_s]
 
                     value = s1.value * s2.value
-                    geo_keys = np.concatenate((s1.geo_key, s2.geo_key))
-                    geo_names = np.concatenate((s1.geo_name, s2.geo_name))
+                    geo_keys = np.concatenate((s1.geo_keys, s2.geo_keys))
+                    geo_names = np.concatenate((s1.geo_names, s2.geo_names))
                     m_order = s1.m_order + s2.m_order
                     x_order = s1.x_order + s2.x_order
                     v_order = s1.v_order + s2.v_order
