@@ -256,8 +256,6 @@ def geo_name(geometric_feature, mode="readable"):
 # anything yet
 # n_groups should be lists of the "n" to include in each group
 def rebin_geometric_features(geo_feature_arr, n_groups):
-    from geometric_features import GeometricFeature
-
     print("Rebinning geometric features")
     # TODO: implement check that bins listed in n_groups matches bins in the geo_feature_arr
     n_vals = [
@@ -334,9 +332,7 @@ def rescale_geometric_features(geo_feature_arr, Ms, Rs, Vs):
 
 
 def transform_pseudotensors(geo_feature_arr):
-    print("Transforming pseudotensors")
-    from geometric_features import GeometricFeature
-
+    # print("Transforming pseudotensors")
     geo_feature_arr = list(geo_feature_arr)
     for i_halo, geo_features_halo in enumerate(geo_feature_arr):
         gs_to_insert = []
