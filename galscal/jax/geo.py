@@ -111,3 +111,10 @@ def compute_geometric_features(M, X, V, r_edges) -> GeoFeatureOrders:
     o2_A = _concat_dict(o2_A)
 
     return GeoFeatureOrders(o0, o1, o2_S, o2_A)
+
+
+def geo_name(l: int, p: int, n: int, sym: bool | None = None) -> str:
+    components = [str(l), str(p), str(n)]
+    if sym is not None:
+        components.append(str(sym))
+    return "(" + ",".join(components) + ")"
