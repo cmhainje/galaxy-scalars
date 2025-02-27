@@ -104,11 +104,15 @@ class DarkHalo:
                 m200m_fof = (
                     np.log10(n_part_inside_edge * m_dmpart_dark) + log_mass_shift
                 )
+                # print(i)
+                if i == 0 or i == len(x_bin_edges) - 1:
+                    raise ValueError(
+                        f"Did not find R200 properly! (idx_dark_halo={self.idx_halo_dark}, i={i}), r_max={r_max}, r_min={r_min}, number_density={number_density}, ref num dens={factor*number_density_mean}"
+                    )
                 break
-        # print(i)
-        if i == 0 or i == len(x_bin_edges) - 1:
+        else:
             raise ValueError(
-                f"Did not find R200 properly! (idx_dark_halo={self.idx_halo_dark}, i={i}), r_max={r_max}, r_min={r_min}, number_density={number_density}, ref num dens={factor*number_density_mean}"
+                f"Did not find R200 properly! (idx_dark_halo={self.idx_halo_dark}), r_max={r_max}, r_min={r_min}"
             )
 
         import astropy
@@ -479,36 +483,48 @@ class SimulationReader:
 
         ### Star formation
         tab_halos["sfr"] = self.subhalos_hydro["SubhaloSFR"][idxs_subhalos_hydro]
-        with h5py.File(
-            f"{self.base_dir}/{self.sim_name}/postprocessing/star_formation_rates.hdf5",
-            "r",
-        ) as f:
-            idxs_subhalos_hydro_sfrfile = f[f"Snapshot_{self.snap_num}"]["SubfindID"]
-            sfrs1 = f[f"Snapshot_{self.snap_num}"]["SFR_MsunPerYrs_in_all_1000Myrs"]
-            idx_subhalo_to_sfr1 = dict(zip(idxs_subhalos_hydro_sfrfile, sfrs1))
-            tab_halos["sfr1"] = [
-                idx_subhalo_to_sfr1[idx] if idx in idx_subhalo_to_sfr1 else np.nan
-                for idx in idxs_subhalos_hydro
-            ]
+
+        sfr_filepath = (
+            f"{self.base_dir}/{self.sim_name}/postprocessing/star_formation_rates.hdf5"
+        )
+        if os.path.exists(sfr_filepath):
+            with h5py.File(sfr_filepath, "r") as f:
+                idxs_subhalos_hydro_sfrfile = f[f"Snapshot_{self.snap_num}"][
+                    "SubfindID"
+                ]
+                sfrs1 = f[f"Snapshot_{self.snap_num}"]["SFR_MsunPerYrs_in_all_1000Myrs"]
+                idx_subhalo_to_sfr1 = dict(zip(idxs_subhalos_hydro_sfrfile, sfrs1))
+                tab_halos["sfr1"] = [
+                    idx_subhalo_to_sfr1[idx] if idx in idx_subhalo_to_sfr1 else np.nan
+                    for idx in idxs_subhalos_hydro
+                ]
+        else:
+            print("warning: extra sfr info not downloaded!")
 
         ### Photometry and colors
         # 2nd dim columns: sdss_u, sdss_g, sdss_r, sdss_i, sdss_z, wfc_acs_f606w, des_y, jwst_f150w
         # 3rd dimension is viewing angles, just take first for now (0)
         phot_file = f"{self.tng_path_hydro}/postprocessing/stellar_photometry/Subhalo_StellarPhot_p07c_cf00dust_res_conv_ns1_rad30pkpc_{self.snap_num_str}.hdf5"
-        f_phot = h5py.File(phot_file)
-        phot = np.array(
-            f_phot["Subhalo_StellarPhot_p07c_cf00dust_res_conv_ns1_rad30pkpc"]
-        )
-        tab_halos["gband"] = phot[idxs_subhalos_hydro, 1, 0]
-        tab_halos["gband_minus_iband"] = (
-            tab_halos["gband"] - phot[idxs_subhalos_hydro, 3, 0]
-        )
+        if os.path.exists(phot_file):
+            f_phot = h5py.File(phot_file)
+            phot = np.array(
+                f_phot["Subhalo_StellarPhot_p07c_cf00dust_res_conv_ns1_rad30pkpc"]
+            )
+            tab_halos["gband"] = phot[idxs_subhalos_hydro, 1, 0]
+            tab_halos["gband_minus_iband"] = (
+                tab_halos["gband"] - phot[idxs_subhalos_hydro, 3, 0]
+            )
+        else:
+            print("warning: extra photometry info not downloaded!")
 
         ### Angular momentum, j_stellar
         fn_stellar = f"{self.tng_path_hydro}/postprocessing/circularities_aligned_allstars_L75n1820TNG099.hdf5"
-        f_stellar = h5py.File(fn_stellar)
-        j_stellar_all = np.array(f_stellar["SpecificAngMom"]).flatten()
-        tab_halos["jstellar"] = j_stellar_all[idxs_subhalos_hydro]
+        if os.path.exists(fn_stellar):
+            f_stellar = h5py.File(fn_stellar)
+            j_stellar_all = np.array(f_stellar["SpecificAngMom"]).flatten()
+            tab_halos["jstellar"] = j_stellar_all[idxs_subhalos_hydro]
+        else:
+            print("warning: stellar circularities info not downloaded!")
 
         tab_halos.write(fn_halos, overwrite=overwrite)
 
